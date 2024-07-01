@@ -8,8 +8,11 @@ module.exports = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**.extropy.sk',
-        port: ''
+        hostname: '**.extropy.sk'
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost'
       }
     ]
   },
