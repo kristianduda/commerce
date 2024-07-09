@@ -10,8 +10,12 @@ export async function GET(): Promise<NextResponse> {
   }
 
   try {
-    const session = await ajax<any>('POST', `${process.env.CMS_URL}/api/carts/${cartId}/checkout`, {
-      url: process.env.APP_URL
+    const session = await ajax<any>({
+      method: 'POST',
+      url: `${process.env.CMS_URL}/api/carts/${cartId}/checkout`,
+      body: {
+        url: process.env.APP_URL
+      }
     });
 
     return NextResponse.redirect(session.url, 303);
