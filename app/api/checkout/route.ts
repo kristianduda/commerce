@@ -1,4 +1,4 @@
-import { ajax } from 'lib/cms/ajax';
+import { ajax } from '@extropysk/payload';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 

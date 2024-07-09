@@ -1,5 +1,4 @@
-import { AjaxError } from 'lib/cms/ajax';
-import { Payload, Where } from 'lib/cms/payload';
+import { AjaxError, Payload } from '@extropysk/payload';
 import {
   Config,
   Cart as PayloadCart,
@@ -265,7 +264,7 @@ export async function getCollectionProducts({
     sortKey = '-' + sortKey;
   }
 
-  const filters: Where[] = [];
+  const filters = [];
   if (collection) {
     filters.push({
       categories: {
@@ -369,7 +368,7 @@ export async function getProducts({
     sortKey = '-' + sortKey;
   }
 
-  let where: Where | undefined;
+  let where;
   if (query) {
     where = {
       or: [
