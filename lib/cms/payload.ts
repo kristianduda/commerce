@@ -1,8 +1,5 @@
 import { ajax } from 'lib/cms/ajax';
-import { Config } from 'lib/cms/payload-types';
 import qs from 'qs';
-
-type Collection = keyof Config['collections'];
 
 const OPERATORS = [
   'equals',
@@ -67,32 +64,36 @@ type PayloadOptions = {
   baseUrl?: string;
 };
 
-export class Payload {
+export class Payload<T extends Record<string, unknown>> {
   readonly baseUrl?: string;
 
   constructor({ baseUrl }: PayloadOptions) {
     this.baseUrl = baseUrl;
   }
 
-  find = <T>(collection: Collection, params: FindParams = {}) => {
+  find = <Key extends keyof T>(collection: Key, params: FindParams = {}) => {
     const query = qs.stringify(params, { addQueryPrefix: true });
-    const url = `${this.baseUrl}/api/${collection}${query}`;
-    return ajax<PaginatedDocs<T>>('GET', url);
+    const url = `${this.baseUrl}/api/${String(collection)}${query}`;
+
+    return ajax<PaginatedDocs<T[Key]>>({ method: 'GET', url });
   };
 
-  findByID = <T>(collection: Collection, id: string, params: BaseParams = {}) => {
+  findByID = <Key extends keyof T>(collection: Key, id: string, params: BaseParams = {}) => {
     const query = qs.stringify(params, { addQueryPrefix: true });
-    const url = `${this.baseUrl}/api/${collection}/${id}${query}`;
-    return ajax<T>('GET', url);
+    const url = `${this.baseUrl}/api/${String(collection)}/${id}${query}`;
+
+    return ajax<T[Key]>({ method: 'GET', url });
   };
 
-  create = <T extends object>(collection: Collection, body: Partial<T>) => {
-    const url = `${this.baseUrl}/api/${collection}`;
-    return ajax<Doc<T>>('POST', url, body);
+  create = <Key extends keyof T>(collection: Key, body: Partial<T[Key]>) => {
+    const url = `${this.baseUrl}/api/${String(collection)}`;
+
+    return ajax<Doc<T[Key]>>({ method: 'POST', url, body });
   };
 
-  update = <T extends object>(collection: Collection, id: string, body: Partial<T>) => {
-    const url = `${this.baseUrl}/api/${collection}/${id}`;
-    return ajax<Doc<T>>('PATCH', url, body);
+  update = <Key extends keyof T>(collection: Key, id: string, body: Partial<T[Key]>) => {
+    const url = `${this.baseUrl}/api/${String(collection)}/${id}`;
+
+    return ajax<Doc<T[Key]>>({ method: 'PATCH', url, body });
   };
 }

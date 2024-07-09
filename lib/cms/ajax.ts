@@ -1,6 +1,12 @@
-interface ErrorMessage {
+type ErrorMessage = {
   message: string;
-}
+};
+
+type AjaxOptions = {
+  url: string;
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  body?: object;
+};
 
 export class AjaxError extends Error {
   statusCode: number;
@@ -13,9 +19,7 @@ export class AjaxError extends Error {
   }
 }
 
-type AjaxMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-
-export const ajax = async <T>(method: AjaxMethod, url: string, data?: object): Promise<T> => {
+export const ajax = async <T>({ url, method, body }: AjaxOptions): Promise<T> => {
   const response = await fetch(url, {
     method,
     credentials: 'include',
@@ -23,13 +27,13 @@ export const ajax = async <T>(method: AjaxMethod, url: string, data?: object): P
       'Content-Type': 'application/json',
       Accept: 'application/json'
     },
-    body: data ? JSON.stringify(data) : undefined
+    body: body ? JSON.stringify(body) : undefined
   });
 
-  const body = await response.json();
+  const data = await response.json();
   if (response.ok) {
-    return body as T;
+    return data as T;
   }
 
-  throw new AjaxError(response.status, body.message ?? response.statusText, body.errors);
+  throw new AjaxError(response.status, data.message ?? response.statusText, data.errors);
 };
