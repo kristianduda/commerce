@@ -1,9 +1,13 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@extropysk/payload':
-    specifier: ^0.0.2
-    version: 0.0.2
+    specifier: ^0.0.3
+    version: 0.0.3
   '@headlessui/react':
     specifier: ^1.7.19
     version: 1.7.19(react-dom@18.2.0)(react@18.2.0)
@@ -164,8 +168,8 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
-  /@extropysk/payload@0.0.2:
-    resolution: {integrity: sha512-Si91TwwZXEzN/XJBK0ADJcUTIcDwjd2C/Dif7giFWDwffL+7mDSv0vzIbXsjLiQwgNfO5BdfgeP+KxCk5Tifcg==}
+  /@extropysk/payload@0.0.3:
+    resolution: {integrity: sha512-GtEpoX8t2462ARFpYnlHsXeVp62Grm5NBWJ2YAZITzoC8pMOLj4GFMWSBivdVEqZLJflDj6ry4SJKPp0QZFyfQ==}
     dependencies:
       qs: 6.12.3
     dev: false
@@ -3664,7 +3668,3 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
