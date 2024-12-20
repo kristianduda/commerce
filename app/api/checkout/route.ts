@@ -11,11 +11,9 @@ export async function GET(): Promise<NextResponse> {
 
   try {
     const url = `${process.env.CMS_URL}/api/carts/${cartId}/checkout`;
-    const session = await ajax<any>(url, 'POST', {
-      url: process.env.APP_URL
-    });
+    const order = await ajax<any>(url, 'POST', {});
 
-    return NextResponse.redirect(session.url, 303);
+    return NextResponse.redirect(order.stripeUrl, 303);
   } catch (err: any) {
     return NextResponse.json({ message: err.message }, { status: err.statusCode });
   }
