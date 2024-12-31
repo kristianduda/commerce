@@ -1,4 +1,5 @@
 import { AjaxError, Payload } from '@extropysk/payload';
+import { Where } from '@extropysk/payload/dist/payload';
 import {
   Config,
   Cart as PayloadCart,
@@ -6,7 +7,7 @@ import {
   Media as PayloadMedia,
   Option as PayloadOption,
   Product as PayloadProduct
-} from 'lib/cms/payload-types';
+} from './payload-types';
 import {
   Cart,
   CartItem,
@@ -21,6 +22,7 @@ import {
 } from './types';
 
 const CURRENCY_CODE = 'eur';
+const GROUP = '6773d95de60127b096984890';
 
 const payload = new Payload<Config['collections']>({ baseUrl: process.env.CMS_URL });
 
@@ -33,7 +35,7 @@ const reshapeCartItems = (lines: PayloadCart['lines']): CartItem[] => {
       id: item.id!,
       quantity: item.quantity,
       merchandise: {
-        id: item.variant,
+        id: item.variant!,
         title: product.title,
         selectedOptions: [],
         product: reshapeProduct(product)
@@ -70,7 +72,7 @@ const reshapeCart = (cart: PayloadCart): Cart => {
 };
 
 export async function createCart(): Promise<Cart> {
-  const cart = await payload.create('carts', { lines: [] });
+  const cart = await payload.create('carts', { group: GROUP, lines: [] });
   return reshapeCart(cart.doc);
 }
 
@@ -264,7 +266,14 @@ export async function getCollectionProducts({
     sortKey = '-' + sortKey;
   }
 
-  const filters = [];
+  const filters: Where[] = [
+    {
+      group: {
+        equals: GROUP
+      }
+    }
+  ];
+
   if (collection) {
     filters.push({
       categories: {
@@ -304,7 +313,7 @@ const reshapeCategory = (category: PayloadCategory): Collection => {
 };
 
 export async function getCollections(): Promise<Collection[]> {
-  const categories = await payload.find('categories', {});
+  const categories = await payload.find('categories', { where: { group: { equals: GROUP } } });
   return [
     {
       handle: '',
@@ -368,9 +377,16 @@ export async function getProducts({
     sortKey = '-' + sortKey;
   }
 
-  let where;
+  const filters: Where[] = [
+    {
+      group: {
+        equals: GROUP
+      }
+    }
+  ];
+
   if (query) {
-    where = {
+    filters.push({
       or: [
         {
           title: {
@@ -383,9 +399,9 @@ export async function getProducts({
           }
         }
       ]
-    };
+    });
   }
 
-  const products = await payload.find('products', { where, sort: sortKey });
+  const products = await payload.find('products', { where: { and: filters }, sort: sortKey });
   return products.docs.map(reshapeProduct);
 }

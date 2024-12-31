@@ -8,13 +8,19 @@
 
 export interface Config {
   collections: {
+    forms: Form;
     posts: Post;
     categories: Category;
+    guides: Guide;
     media: Media;
     users: User;
     options: Option;
     products: Product;
+    groups: Group;
     carts: Cart;
+    orders: Order;
+    properties: Property;
+    reservations: Reservation;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
@@ -22,10 +28,83 @@ export interface Config {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms".
+ */
+export interface Form {
+  id: string;
+  group: string | Group;
+  title: string;
+  fields: (
+    | {
+        name: string;
+        label?: string | null;
+        defaultValue?: string | null;
+        required?: boolean | null;
+        minLength?: number | null;
+        maxLength?: number | null;
+        pattern?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'text-field';
+      }
+    | {
+        name: string;
+        label?: string | null;
+        defaultValue?: number | null;
+        required?: boolean | null;
+        min?: number | null;
+        max?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'number-field';
+      }
+    | {
+        name: string;
+        label?: string | null;
+        defaultValue?: boolean | null;
+        required?: boolean | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'checkbox-field';
+      }
+    | {
+        name: string;
+        label?: string | null;
+        defaultValue?: string | null;
+        required?: boolean | null;
+        options?:
+          | {
+              value: string;
+              label?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'select-field';
+      }
+  )[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "groups".
+ */
+export interface Group {
+  id: string;
+  name: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts".
  */
 export interface Post {
   id: string;
+  language?: ('en' | 'sk') | null;
+  group: string | Group;
   title: string;
   summary?: string | null;
   content?: {
@@ -67,6 +146,8 @@ export interface Post {
  */
 export interface Category {
   id: string;
+  language?: ('en' | 'sk') | null;
+  group: string | Group;
   title: string;
   description?: string | null;
   updatedAt: string;
@@ -80,6 +161,7 @@ export interface User {
   id: string;
   name?: string | null;
   roles?: ('admin' | 'user')[] | null;
+  groups?: (string | Group)[] | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -97,6 +179,7 @@ export interface User {
  */
 export interface Media {
   id: string;
+  group: string | Group;
   alt: string;
   caption?: {
     root: {
@@ -126,10 +209,315 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guides".
+ */
+export interface Guide {
+  id: string;
+  language?: ('en' | 'sk') | null;
+  group: string | Group;
+  name: string;
+  description: string;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  property?: (string | null) | Property;
+  orderBy?: number | null;
+  isPrivate?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "properties".
+ */
+export interface Property {
+  id: string;
+  language?: ('en' | 'sk') | null;
+  group: string | Group;
+  name: string;
+  address: {
+    street: string;
+    city: string;
+    zipCode: string;
+    country:
+      | 'AD'
+      | 'AE'
+      | 'AF'
+      | 'AG'
+      | 'AI'
+      | 'AL'
+      | 'AM'
+      | 'AO'
+      | 'AQ'
+      | 'AR'
+      | 'AS'
+      | 'AT'
+      | 'AU'
+      | 'AW'
+      | 'AX'
+      | 'AZ'
+      | 'BA'
+      | 'BB'
+      | 'BD'
+      | 'BE'
+      | 'BF'
+      | 'BG'
+      | 'BH'
+      | 'BI'
+      | 'BJ'
+      | 'BL'
+      | 'BM'
+      | 'BN'
+      | 'BO'
+      | 'BQ'
+      | 'BR'
+      | 'BS'
+      | 'BT'
+      | 'BV'
+      | 'BW'
+      | 'BY'
+      | 'BZ'
+      | 'CA'
+      | 'CC'
+      | 'CD'
+      | 'CF'
+      | 'CG'
+      | 'CH'
+      | 'CI'
+      | 'CK'
+      | 'CL'
+      | 'CM'
+      | 'CN'
+      | 'CO'
+      | 'CR'
+      | 'CU'
+      | 'CV'
+      | 'CW'
+      | 'CX'
+      | 'CY'
+      | 'CZ'
+      | 'DE'
+      | 'DJ'
+      | 'DK'
+      | 'DM'
+      | 'DO'
+      | 'DZ'
+      | 'EC'
+      | 'EE'
+      | 'EG'
+      | 'EH'
+      | 'ER'
+      | 'ES'
+      | 'ET'
+      | 'FI'
+      | 'FJ'
+      | 'FK'
+      | 'FM'
+      | 'FO'
+      | 'FR'
+      | 'GA'
+      | 'GB'
+      | 'GD'
+      | 'GE'
+      | 'GF'
+      | 'GG'
+      | 'GH'
+      | 'GI'
+      | 'GL'
+      | 'GM'
+      | 'GN'
+      | 'GP'
+      | 'GQ'
+      | 'GR'
+      | 'GS'
+      | 'GT'
+      | 'GU'
+      | 'GW'
+      | 'GY'
+      | 'HK'
+      | 'HM'
+      | 'HN'
+      | 'HR'
+      | 'HT'
+      | 'HU'
+      | 'ID'
+      | 'IE'
+      | 'IL'
+      | 'IM'
+      | 'IN'
+      | 'IO'
+      | 'IQ'
+      | 'IR'
+      | 'IS'
+      | 'IT'
+      | 'JE'
+      | 'JM'
+      | 'JO'
+      | 'JP'
+      | 'KE'
+      | 'KG'
+      | 'KH'
+      | 'KI'
+      | 'KM'
+      | 'KN'
+      | 'KP'
+      | 'KR'
+      | 'KW'
+      | 'KY'
+      | 'KZ'
+      | 'LA'
+      | 'LB'
+      | 'LC'
+      | 'LI'
+      | 'LK'
+      | 'LR'
+      | 'LS'
+      | 'LT'
+      | 'LU'
+      | 'LV'
+      | 'LY'
+      | 'MA'
+      | 'MC'
+      | 'MD'
+      | 'ME'
+      | 'MF'
+      | 'MG'
+      | 'MH'
+      | 'MK'
+      | 'ML'
+      | 'MM'
+      | 'MN'
+      | 'MO'
+      | 'MP'
+      | 'MQ'
+      | 'MR'
+      | 'MS'
+      | 'MT'
+      | 'MU'
+      | 'MV'
+      | 'MW'
+      | 'MX'
+      | 'MY'
+      | 'MZ'
+      | 'NA'
+      | 'NC'
+      | 'NE'
+      | 'NF'
+      | 'NG'
+      | 'NI'
+      | 'NL'
+      | 'NO'
+      | 'NP'
+      | 'NR'
+      | 'NU'
+      | 'NZ'
+      | 'OM'
+      | 'PA'
+      | 'PE'
+      | 'PF'
+      | 'PG'
+      | 'PH'
+      | 'PK'
+      | 'PL'
+      | 'PM'
+      | 'PN'
+      | 'PR'
+      | 'PS'
+      | 'PT'
+      | 'PW'
+      | 'PY'
+      | 'QA'
+      | 'RE'
+      | 'RO'
+      | 'RS'
+      | 'RU'
+      | 'RW'
+      | 'SA'
+      | 'SB'
+      | 'SC'
+      | 'SD'
+      | 'SE'
+      | 'SG'
+      | 'SH'
+      | 'SI'
+      | 'SJ'
+      | 'SK'
+      | 'SL'
+      | 'SM'
+      | 'SN'
+      | 'SO'
+      | 'SR'
+      | 'SS'
+      | 'ST'
+      | 'SV'
+      | 'SX'
+      | 'SY'
+      | 'SZ'
+      | 'TC'
+      | 'TD'
+      | 'TF'
+      | 'TG'
+      | 'TH'
+      | 'TJ'
+      | 'TK'
+      | 'TL'
+      | 'TM'
+      | 'TN'
+      | 'TO'
+      | 'TR'
+      | 'TT'
+      | 'TV'
+      | 'TW'
+      | 'TZ'
+      | 'UA'
+      | 'UG'
+      | 'UM'
+      | 'US'
+      | 'UY'
+      | 'UZ'
+      | 'VA'
+      | 'VC'
+      | 'VE'
+      | 'VG'
+      | 'VI'
+      | 'VN'
+      | 'VU'
+      | 'WF'
+      | 'WS'
+      | 'XK'
+      | 'YE'
+      | 'YT'
+      | 'ZA'
+      | 'ZM'
+      | 'ZW';
+  };
+  checkInType: 'nobody' | 'atLeastOne' | 'everybody';
+  checkinTime: string;
+  checkoutTime: string;
+  headerImage?: string | Media | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "options".
  */
 export interface Option {
   id: string;
+  language?: ('en' | 'sk') | null;
+  group: string | Group;
   name: string;
   values: {
     value: string;
@@ -145,6 +533,8 @@ export interface Option {
  */
 export interface Product {
   id: string;
+  language?: ('en' | 'sk') | null;
+  group: string | Group;
   title: string;
   disabled?: boolean | null;
   description: string;
@@ -153,7 +543,6 @@ export interface Product {
     price: {
       amount: number;
       currencyCode: 'eur';
-      stripePriceID?: string | null;
     };
     selectedOptions?:
       | {
@@ -176,6 +565,7 @@ export interface Product {
  */
 export interface Cart {
   id: string;
+  group: string | Group;
   totalAmount?: number | null;
   totalTaxAmount?: number | null;
   currencyCode?: string | null;
@@ -184,7 +574,317 @@ export interface Cart {
   lines?:
     | {
         product: string | Product;
-        variant: string;
+        variant?: string | null;
+        quantity: number;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: string;
+  group: string | Group;
+  totalAmount?: number | null;
+  totalTaxAmount?: number | null;
+  currencyCode?: string | null;
+  totalQuantity?: number | null;
+  user?: (string | null) | User;
+  lines?:
+    | {
+        product: string | Product;
+        variant?: string | null;
+        quantity: number;
+        price?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  stripeSessionId?: string | null;
+  stripeUrl?: string | null;
+  reservation?: (string | null) | Reservation;
+  status: 'open' | 'complete' | 'expired';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reservations".
+ */
+export interface Reservation {
+  id: string;
+  group: string | Group;
+  checkinDate: string;
+  checkoutDate: string;
+  status: 'reserved' | 'confirmed' | 'ongoing' | 'completed' | 'canceled';
+  guestsCount: number;
+  guests?:
+    | {
+        idCard: string;
+        name: string;
+        email: string;
+        phone: string;
+        country:
+          | 'AD'
+          | 'AE'
+          | 'AF'
+          | 'AG'
+          | 'AI'
+          | 'AL'
+          | 'AM'
+          | 'AO'
+          | 'AQ'
+          | 'AR'
+          | 'AS'
+          | 'AT'
+          | 'AU'
+          | 'AW'
+          | 'AX'
+          | 'AZ'
+          | 'BA'
+          | 'BB'
+          | 'BD'
+          | 'BE'
+          | 'BF'
+          | 'BG'
+          | 'BH'
+          | 'BI'
+          | 'BJ'
+          | 'BL'
+          | 'BM'
+          | 'BN'
+          | 'BO'
+          | 'BQ'
+          | 'BR'
+          | 'BS'
+          | 'BT'
+          | 'BV'
+          | 'BW'
+          | 'BY'
+          | 'BZ'
+          | 'CA'
+          | 'CC'
+          | 'CD'
+          | 'CF'
+          | 'CG'
+          | 'CH'
+          | 'CI'
+          | 'CK'
+          | 'CL'
+          | 'CM'
+          | 'CN'
+          | 'CO'
+          | 'CR'
+          | 'CU'
+          | 'CV'
+          | 'CW'
+          | 'CX'
+          | 'CY'
+          | 'CZ'
+          | 'DE'
+          | 'DJ'
+          | 'DK'
+          | 'DM'
+          | 'DO'
+          | 'DZ'
+          | 'EC'
+          | 'EE'
+          | 'EG'
+          | 'EH'
+          | 'ER'
+          | 'ES'
+          | 'ET'
+          | 'FI'
+          | 'FJ'
+          | 'FK'
+          | 'FM'
+          | 'FO'
+          | 'FR'
+          | 'GA'
+          | 'GB'
+          | 'GD'
+          | 'GE'
+          | 'GF'
+          | 'GG'
+          | 'GH'
+          | 'GI'
+          | 'GL'
+          | 'GM'
+          | 'GN'
+          | 'GP'
+          | 'GQ'
+          | 'GR'
+          | 'GS'
+          | 'GT'
+          | 'GU'
+          | 'GW'
+          | 'GY'
+          | 'HK'
+          | 'HM'
+          | 'HN'
+          | 'HR'
+          | 'HT'
+          | 'HU'
+          | 'ID'
+          | 'IE'
+          | 'IL'
+          | 'IM'
+          | 'IN'
+          | 'IO'
+          | 'IQ'
+          | 'IR'
+          | 'IS'
+          | 'IT'
+          | 'JE'
+          | 'JM'
+          | 'JO'
+          | 'JP'
+          | 'KE'
+          | 'KG'
+          | 'KH'
+          | 'KI'
+          | 'KM'
+          | 'KN'
+          | 'KP'
+          | 'KR'
+          | 'KW'
+          | 'KY'
+          | 'KZ'
+          | 'LA'
+          | 'LB'
+          | 'LC'
+          | 'LI'
+          | 'LK'
+          | 'LR'
+          | 'LS'
+          | 'LT'
+          | 'LU'
+          | 'LV'
+          | 'LY'
+          | 'MA'
+          | 'MC'
+          | 'MD'
+          | 'ME'
+          | 'MF'
+          | 'MG'
+          | 'MH'
+          | 'MK'
+          | 'ML'
+          | 'MM'
+          | 'MN'
+          | 'MO'
+          | 'MP'
+          | 'MQ'
+          | 'MR'
+          | 'MS'
+          | 'MT'
+          | 'MU'
+          | 'MV'
+          | 'MW'
+          | 'MX'
+          | 'MY'
+          | 'MZ'
+          | 'NA'
+          | 'NC'
+          | 'NE'
+          | 'NF'
+          | 'NG'
+          | 'NI'
+          | 'NL'
+          | 'NO'
+          | 'NP'
+          | 'NR'
+          | 'NU'
+          | 'NZ'
+          | 'OM'
+          | 'PA'
+          | 'PE'
+          | 'PF'
+          | 'PG'
+          | 'PH'
+          | 'PK'
+          | 'PL'
+          | 'PM'
+          | 'PN'
+          | 'PR'
+          | 'PS'
+          | 'PT'
+          | 'PW'
+          | 'PY'
+          | 'QA'
+          | 'RE'
+          | 'RO'
+          | 'RS'
+          | 'RU'
+          | 'RW'
+          | 'SA'
+          | 'SB'
+          | 'SC'
+          | 'SD'
+          | 'SE'
+          | 'SG'
+          | 'SH'
+          | 'SI'
+          | 'SJ'
+          | 'SK'
+          | 'SL'
+          | 'SM'
+          | 'SN'
+          | 'SO'
+          | 'SR'
+          | 'SS'
+          | 'ST'
+          | 'SV'
+          | 'SX'
+          | 'SY'
+          | 'SZ'
+          | 'TC'
+          | 'TD'
+          | 'TF'
+          | 'TG'
+          | 'TH'
+          | 'TJ'
+          | 'TK'
+          | 'TL'
+          | 'TM'
+          | 'TN'
+          | 'TO'
+          | 'TR'
+          | 'TT'
+          | 'TV'
+          | 'TW'
+          | 'TZ'
+          | 'UA'
+          | 'UG'
+          | 'UM'
+          | 'US'
+          | 'UY'
+          | 'UZ'
+          | 'VA'
+          | 'VC'
+          | 'VE'
+          | 'VG'
+          | 'VI'
+          | 'VN'
+          | 'VU'
+          | 'WF'
+          | 'WS'
+          | 'XK'
+          | 'YE'
+          | 'YT'
+          | 'ZA'
+          | 'ZM'
+          | 'ZW';
+        id?: string | null;
+      }[]
+    | null;
+  lines?:
+    | {
+        product: string | Product;
+        variant?: string | null;
         quantity: number;
         id?: string | null;
       }[]
