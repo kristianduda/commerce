@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@extropysk/payload':
-    specifier: ^0.0.3
-    version: 0.0.3
+    specifier: ^0.1.1
+    version: 0.1.2
   '@headlessui/react':
     specifier: ^1.7.19
     version: 1.7.19(react-dom@18.2.0)(react@18.2.0)
@@ -168,8 +168,8 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
-  /@extropysk/payload@0.0.3:
-    resolution: {integrity: sha512-GtEpoX8t2462ARFpYnlHsXeVp62Grm5NBWJ2YAZITzoC8pMOLj4GFMWSBivdVEqZLJflDj6ry4SJKPp0QZFyfQ==}
+  /@extropysk/payload@0.1.2:
+    resolution: {integrity: sha512-u5rr6+GhvWShoVKuwBoFAjlQECnb5E0E37jd2RI9Pc1P9xa+TdKu6QF5fgjIsocT3Z0d4iquSiOhu4bIRupU4g==}
     dependencies:
       qs: 6.12.3
     dev: false

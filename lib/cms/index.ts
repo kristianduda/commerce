@@ -1,5 +1,5 @@
-import { AjaxError, Payload } from '@extropysk/payload';
-import { Where } from '@extropysk/payload/dist/payload';
+import { AjaxError, Payload, Where } from '@extropysk/payload';
+
 import {
   Config,
   Cart as PayloadCart,
@@ -24,7 +24,7 @@ import {
 const CURRENCY_CODE = 'eur';
 const GROUP = '6773d95de60127b096984890';
 
-const payload = new Payload<Config['collections']>({ baseUrl: process.env.CMS_URL });
+const payload = new Payload<Config['collections']>({ baseUrl: process.env.CMS_URL! });
 
 const reshapeCartItems = (lines: PayloadCart['lines']): CartItem[] => {
   return (lines ?? []).map((item) => {
@@ -63,7 +63,7 @@ const reshapeCart = (cart: PayloadCart): Cart => {
       },
       subtotalAmount: {
         currencyCode,
-        amount: '0.0'
+        amount: cart.subtotalAmount?.toString()!
       }
     },
     lines: reshapeCartItems(cart.lines),

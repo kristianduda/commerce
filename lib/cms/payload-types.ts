@@ -8,19 +8,24 @@
 
 export interface Config {
   collections: {
-    forms: Form;
-    posts: Post;
     categories: Category;
-    guides: Guide;
     media: Media;
-    users: User;
+    posts: Post;
     options: Option;
+    taxes: Tax;
     products: Product;
-    groups: Group;
     carts: Cart;
     orders: Order;
+    customers: Customer;
+    invoices: Invoice;
+    guides: Guide;
     properties: Property;
     reservations: Reservation;
+    forms: Form;
+    users: User;
+    roles: Role;
+    groups: Group;
+    secrets: Secret;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
@@ -28,62 +33,13 @@ export interface Config {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "forms".
+ * via the `definition` "categories".
  */
-export interface Form {
+export interface Category {
   id: string;
   group: string | Group;
   title: string;
-  fields: (
-    | {
-        name: string;
-        label?: string | null;
-        defaultValue?: string | null;
-        required?: boolean | null;
-        minLength?: number | null;
-        maxLength?: number | null;
-        pattern?: string | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'text-field';
-      }
-    | {
-        name: string;
-        label?: string | null;
-        defaultValue?: number | null;
-        required?: boolean | null;
-        min?: number | null;
-        max?: number | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'number-field';
-      }
-    | {
-        name: string;
-        label?: string | null;
-        defaultValue?: boolean | null;
-        required?: boolean | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'checkbox-field';
-      }
-    | {
-        name: string;
-        label?: string | null;
-        defaultValue?: string | null;
-        required?: boolean | null;
-        options?:
-          | {
-              value: string;
-              label?: string | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'select-field';
-      }
-  )[];
+  description?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -94,84 +50,273 @@ export interface Form {
 export interface Group {
   id: string;
   name: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
- */
-export interface Post {
-  id: string;
-  language?: ('en' | 'sk') | null;
-  group: string | Group;
-  title: string;
-  summary?: string | null;
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  categories?: (string | Category)[] | null;
-  publishedAt?: string | null;
-  authors?: (string | User)[] | null;
-  populatedAuthors?:
-    | {
-        id?: string | null;
-        name?: string | null;
-      }[]
-    | null;
-  slug?: string | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    image?: string | Media | null;
+  cin?: string | null;
+  tin?: string | null;
+  vatId?: string | null;
+  vatPayer?: boolean | null;
+  email?: string | null;
+  phone?: string | null;
+  address?: {
+    street?: string | null;
+    zipCode?: string | null;
+    city?: string | null;
+    country?:
+      | (
+          | 'AD'
+          | 'AE'
+          | 'AF'
+          | 'AG'
+          | 'AI'
+          | 'AL'
+          | 'AM'
+          | 'AO'
+          | 'AQ'
+          | 'AR'
+          | 'AS'
+          | 'AT'
+          | 'AU'
+          | 'AW'
+          | 'AX'
+          | 'AZ'
+          | 'BA'
+          | 'BB'
+          | 'BD'
+          | 'BE'
+          | 'BF'
+          | 'BG'
+          | 'BH'
+          | 'BI'
+          | 'BJ'
+          | 'BL'
+          | 'BM'
+          | 'BN'
+          | 'BO'
+          | 'BQ'
+          | 'BR'
+          | 'BS'
+          | 'BT'
+          | 'BV'
+          | 'BW'
+          | 'BY'
+          | 'BZ'
+          | 'CA'
+          | 'CC'
+          | 'CD'
+          | 'CF'
+          | 'CG'
+          | 'CH'
+          | 'CI'
+          | 'CK'
+          | 'CL'
+          | 'CM'
+          | 'CN'
+          | 'CO'
+          | 'CR'
+          | 'CU'
+          | 'CV'
+          | 'CW'
+          | 'CX'
+          | 'CY'
+          | 'CZ'
+          | 'DE'
+          | 'DJ'
+          | 'DK'
+          | 'DM'
+          | 'DO'
+          | 'DZ'
+          | 'EC'
+          | 'EE'
+          | 'EG'
+          | 'EH'
+          | 'ER'
+          | 'ES'
+          | 'ET'
+          | 'FI'
+          | 'FJ'
+          | 'FK'
+          | 'FM'
+          | 'FO'
+          | 'FR'
+          | 'GA'
+          | 'GB'
+          | 'GD'
+          | 'GE'
+          | 'GF'
+          | 'GG'
+          | 'GH'
+          | 'GI'
+          | 'GL'
+          | 'GM'
+          | 'GN'
+          | 'GP'
+          | 'GQ'
+          | 'GR'
+          | 'GS'
+          | 'GT'
+          | 'GU'
+          | 'GW'
+          | 'GY'
+          | 'HK'
+          | 'HM'
+          | 'HN'
+          | 'HR'
+          | 'HT'
+          | 'HU'
+          | 'ID'
+          | 'IE'
+          | 'IL'
+          | 'IM'
+          | 'IN'
+          | 'IO'
+          | 'IQ'
+          | 'IR'
+          | 'IS'
+          | 'IT'
+          | 'JE'
+          | 'JM'
+          | 'JO'
+          | 'JP'
+          | 'KE'
+          | 'KG'
+          | 'KH'
+          | 'KI'
+          | 'KM'
+          | 'KN'
+          | 'KP'
+          | 'KR'
+          | 'KW'
+          | 'KY'
+          | 'KZ'
+          | 'LA'
+          | 'LB'
+          | 'LC'
+          | 'LI'
+          | 'LK'
+          | 'LR'
+          | 'LS'
+          | 'LT'
+          | 'LU'
+          | 'LV'
+          | 'LY'
+          | 'MA'
+          | 'MC'
+          | 'MD'
+          | 'ME'
+          | 'MF'
+          | 'MG'
+          | 'MH'
+          | 'MK'
+          | 'ML'
+          | 'MM'
+          | 'MN'
+          | 'MO'
+          | 'MP'
+          | 'MQ'
+          | 'MR'
+          | 'MS'
+          | 'MT'
+          | 'MU'
+          | 'MV'
+          | 'MW'
+          | 'MX'
+          | 'MY'
+          | 'MZ'
+          | 'NA'
+          | 'NC'
+          | 'NE'
+          | 'NF'
+          | 'NG'
+          | 'NI'
+          | 'NL'
+          | 'NO'
+          | 'NP'
+          | 'NR'
+          | 'NU'
+          | 'NZ'
+          | 'OM'
+          | 'PA'
+          | 'PE'
+          | 'PF'
+          | 'PG'
+          | 'PH'
+          | 'PK'
+          | 'PL'
+          | 'PM'
+          | 'PN'
+          | 'PR'
+          | 'PS'
+          | 'PT'
+          | 'PW'
+          | 'PY'
+          | 'QA'
+          | 'RE'
+          | 'RO'
+          | 'RS'
+          | 'RU'
+          | 'RW'
+          | 'SA'
+          | 'SB'
+          | 'SC'
+          | 'SD'
+          | 'SE'
+          | 'SG'
+          | 'SH'
+          | 'SI'
+          | 'SJ'
+          | 'SK'
+          | 'SL'
+          | 'SM'
+          | 'SN'
+          | 'SO'
+          | 'SR'
+          | 'SS'
+          | 'ST'
+          | 'SV'
+          | 'SX'
+          | 'SY'
+          | 'SZ'
+          | 'TC'
+          | 'TD'
+          | 'TF'
+          | 'TG'
+          | 'TH'
+          | 'TJ'
+          | 'TK'
+          | 'TL'
+          | 'TM'
+          | 'TN'
+          | 'TO'
+          | 'TR'
+          | 'TT'
+          | 'TV'
+          | 'TW'
+          | 'TZ'
+          | 'UA'
+          | 'UG'
+          | 'UM'
+          | 'US'
+          | 'UY'
+          | 'UZ'
+          | 'VA'
+          | 'VC'
+          | 'VE'
+          | 'VG'
+          | 'VI'
+          | 'VN'
+          | 'VU'
+          | 'WF'
+          | 'WS'
+          | 'XK'
+          | 'YE'
+          | 'YT'
+          | 'ZA'
+          | 'ZM'
+          | 'ZW'
+        )
+      | null;
   };
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: string;
-  language?: ('en' | 'sk') | null;
-  group: string | Group;
-  title: string;
-  description?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: string;
-  name?: string | null;
-  roles?: ('admin' | 'user')[] | null;
-  groups?: (string | Group)[] | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  password: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -196,6 +341,7 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -209,13 +355,125 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "guides".
+ * via the `definition` "posts".
  */
-export interface Guide {
+export interface Post {
   id: string;
-  language?: ('en' | 'sk') | null;
+  group: string | Group;
+  title: string;
+  summary?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  categories?: (string | Category)[] | null;
+  publishedAt?: string | null;
+  user?: (string | null) | User;
+  populatedUser?: {
+    id?: string | null;
+    name?: string | null;
+  };
+  slug?: string | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    image?: string | Media | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: string;
+  name?: string | null;
+  roles?: ('admin' | 'user')[] | null;
+  groups?:
+    | {
+        group: string | Group;
+        roles?: (string | Role)[] | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "roles".
+ */
+export interface Role {
+  id: string;
+  name: string;
+  permissions?:
+    | {
+        subject: 'auth' | 'content' | 'commerce' | 'accommodation' | 'builder' | 'invoicing';
+        action: '1' | '15';
+        id?: string | null;
+      }[]
+    | null;
+  group: string | Group;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "options".
+ */
+export interface Option {
+  id: string;
   group: string | Group;
   name: string;
+  values: {
+    value: string;
+    label: string;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "taxes".
+ */
+export interface Tax {
+  id: string;
+  group: string | Group;
+  title: string;
+  rate: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: string;
+  group: string | Group;
+  title: string;
+  disabled?: boolean | null;
   description: string;
   content?: {
     root: {
@@ -232,9 +490,428 @@ export interface Guide {
     };
     [k: string]: unknown;
   } | null;
+  media: string | Media;
+  tax?: (string | null) | Tax;
+  variants: {
+    price: {
+      amount: number;
+      currencyCode: 'eur' | 'czk';
+    };
+    selectedOptions?:
+      | {
+          option: string | Option;
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    id?: string | null;
+  }[];
+  categories?: (string | Category)[] | null;
+  tags?: string[] | null;
+  orderBy?: number | null;
+  stripeProductID?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts".
+ */
+export interface Cart {
+  id: string;
+  group: string | Group;
+  currencyCode: 'eur' | 'czk';
+  subtotalAmount?: number | null;
+  totalAmount?: number | null;
+  totalTaxAmount?: number | null;
+  totalQuantity?: number | null;
+  user?: (string | null) | User;
+  lines?:
+    | {
+        product: string | Product;
+        variant?: string | null;
+        quantity: number;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: string;
+  group: string | Group;
+  currencyCode: 'eur' | 'czk';
+  subtotalAmount?: number | null;
+  totalAmount?: number | null;
+  totalTaxAmount?: number | null;
+  totalQuantity?: number | null;
+  user?: (string | null) | User;
+  lines?:
+    | {
+        product: string | Product;
+        variant?: string | null;
+        quantity: number;
+        price?: number | null;
+        netPrice?: number | null;
+        grossPrice?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  stripeSessionId?: string | null;
+  stripeUrl?: string | null;
+  reservation?: (string | null) | Reservation;
+  status: 'open' | 'complete' | 'expired';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reservations".
+ */
+export interface Reservation {
+  id: string;
+  checkinDate: string;
+  checkoutDate: string;
+  lines?:
+    | {
+        product: string | Product;
+        variant?: string | null;
+        quantity: number;
+        id?: string | null;
+      }[]
+    | null;
+  guests?:
+    | {
+        idCard: string;
+        name: string;
+        email: string;
+        phone: string;
+        id?: string | null;
+      }[]
+    | null;
+  group: string | Group;
+  status: 'reserved' | 'confirmed' | 'ongoing' | 'completed' | 'canceled';
+  guestsCount: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers".
+ */
+export interface Customer {
+  id: string;
+  name: string;
+  cin: string;
+  tin?: string | null;
+  vatId?: string | null;
+  vatPayer?: boolean | null;
+  email?: string | null;
+  phone?: string | null;
+  address?: {
+    street?: string | null;
+    zipCode?: string | null;
+    city?: string | null;
+    country?:
+      | (
+          | 'AD'
+          | 'AE'
+          | 'AF'
+          | 'AG'
+          | 'AI'
+          | 'AL'
+          | 'AM'
+          | 'AO'
+          | 'AQ'
+          | 'AR'
+          | 'AS'
+          | 'AT'
+          | 'AU'
+          | 'AW'
+          | 'AX'
+          | 'AZ'
+          | 'BA'
+          | 'BB'
+          | 'BD'
+          | 'BE'
+          | 'BF'
+          | 'BG'
+          | 'BH'
+          | 'BI'
+          | 'BJ'
+          | 'BL'
+          | 'BM'
+          | 'BN'
+          | 'BO'
+          | 'BQ'
+          | 'BR'
+          | 'BS'
+          | 'BT'
+          | 'BV'
+          | 'BW'
+          | 'BY'
+          | 'BZ'
+          | 'CA'
+          | 'CC'
+          | 'CD'
+          | 'CF'
+          | 'CG'
+          | 'CH'
+          | 'CI'
+          | 'CK'
+          | 'CL'
+          | 'CM'
+          | 'CN'
+          | 'CO'
+          | 'CR'
+          | 'CU'
+          | 'CV'
+          | 'CW'
+          | 'CX'
+          | 'CY'
+          | 'CZ'
+          | 'DE'
+          | 'DJ'
+          | 'DK'
+          | 'DM'
+          | 'DO'
+          | 'DZ'
+          | 'EC'
+          | 'EE'
+          | 'EG'
+          | 'EH'
+          | 'ER'
+          | 'ES'
+          | 'ET'
+          | 'FI'
+          | 'FJ'
+          | 'FK'
+          | 'FM'
+          | 'FO'
+          | 'FR'
+          | 'GA'
+          | 'GB'
+          | 'GD'
+          | 'GE'
+          | 'GF'
+          | 'GG'
+          | 'GH'
+          | 'GI'
+          | 'GL'
+          | 'GM'
+          | 'GN'
+          | 'GP'
+          | 'GQ'
+          | 'GR'
+          | 'GS'
+          | 'GT'
+          | 'GU'
+          | 'GW'
+          | 'GY'
+          | 'HK'
+          | 'HM'
+          | 'HN'
+          | 'HR'
+          | 'HT'
+          | 'HU'
+          | 'ID'
+          | 'IE'
+          | 'IL'
+          | 'IM'
+          | 'IN'
+          | 'IO'
+          | 'IQ'
+          | 'IR'
+          | 'IS'
+          | 'IT'
+          | 'JE'
+          | 'JM'
+          | 'JO'
+          | 'JP'
+          | 'KE'
+          | 'KG'
+          | 'KH'
+          | 'KI'
+          | 'KM'
+          | 'KN'
+          | 'KP'
+          | 'KR'
+          | 'KW'
+          | 'KY'
+          | 'KZ'
+          | 'LA'
+          | 'LB'
+          | 'LC'
+          | 'LI'
+          | 'LK'
+          | 'LR'
+          | 'LS'
+          | 'LT'
+          | 'LU'
+          | 'LV'
+          | 'LY'
+          | 'MA'
+          | 'MC'
+          | 'MD'
+          | 'ME'
+          | 'MF'
+          | 'MG'
+          | 'MH'
+          | 'MK'
+          | 'ML'
+          | 'MM'
+          | 'MN'
+          | 'MO'
+          | 'MP'
+          | 'MQ'
+          | 'MR'
+          | 'MS'
+          | 'MT'
+          | 'MU'
+          | 'MV'
+          | 'MW'
+          | 'MX'
+          | 'MY'
+          | 'MZ'
+          | 'NA'
+          | 'NC'
+          | 'NE'
+          | 'NF'
+          | 'NG'
+          | 'NI'
+          | 'NL'
+          | 'NO'
+          | 'NP'
+          | 'NR'
+          | 'NU'
+          | 'NZ'
+          | 'OM'
+          | 'PA'
+          | 'PE'
+          | 'PF'
+          | 'PG'
+          | 'PH'
+          | 'PK'
+          | 'PL'
+          | 'PM'
+          | 'PN'
+          | 'PR'
+          | 'PS'
+          | 'PT'
+          | 'PW'
+          | 'PY'
+          | 'QA'
+          | 'RE'
+          | 'RO'
+          | 'RS'
+          | 'RU'
+          | 'RW'
+          | 'SA'
+          | 'SB'
+          | 'SC'
+          | 'SD'
+          | 'SE'
+          | 'SG'
+          | 'SH'
+          | 'SI'
+          | 'SJ'
+          | 'SK'
+          | 'SL'
+          | 'SM'
+          | 'SN'
+          | 'SO'
+          | 'SR'
+          | 'SS'
+          | 'ST'
+          | 'SV'
+          | 'SX'
+          | 'SY'
+          | 'SZ'
+          | 'TC'
+          | 'TD'
+          | 'TF'
+          | 'TG'
+          | 'TH'
+          | 'TJ'
+          | 'TK'
+          | 'TL'
+          | 'TM'
+          | 'TN'
+          | 'TO'
+          | 'TR'
+          | 'TT'
+          | 'TV'
+          | 'TW'
+          | 'TZ'
+          | 'UA'
+          | 'UG'
+          | 'UM'
+          | 'US'
+          | 'UY'
+          | 'UZ'
+          | 'VA'
+          | 'VC'
+          | 'VE'
+          | 'VG'
+          | 'VI'
+          | 'VN'
+          | 'VU'
+          | 'WF'
+          | 'WS'
+          | 'XK'
+          | 'YE'
+          | 'YT'
+          | 'ZA'
+          | 'ZM'
+          | 'ZW'
+        )
+      | null;
+  };
+  group: string | Group;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "invoices".
+ */
+export interface Invoice {
+  id: string;
+  group: string | Group;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guides".
+ */
+export interface Guide {
+  id: string;
+  name: string;
+  disabled?: boolean | null;
+  description: string;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  group: string | Group;
   property?: (string | null) | Property;
   orderBy?: number | null;
-  isPrivate?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -244,13 +921,18 @@ export interface Guide {
  */
 export interface Property {
   id: string;
-  language?: ('en' | 'sk') | null;
   group: string | Group;
+  checkInType: 'nobody' | 'atLeastOne' | 'everybody';
   name: string;
+  disabled?: boolean | null;
+  email?: string | null;
+  phone?: string | null;
+  website?: string | null;
+  headerImage?: string | Media | null;
   address: {
     street: string;
-    city: string;
     zipCode: string;
+    city: string;
     country:
       | 'AD'
       | 'AE'
@@ -503,392 +1185,83 @@ export interface Property {
       | 'ZM'
       | 'ZW';
   };
-  checkInType: 'nobody' | 'atLeastOne' | 'everybody';
-  checkinTime: string;
-  checkoutTime: string;
-  headerImage?: string | Media | null;
+  coordinates?: {
+    latitude?: number | null;
+    longitude?: number | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "options".
+ * via the `definition` "forms".
  */
-export interface Option {
-  id: string;
-  language?: ('en' | 'sk') | null;
-  group: string | Group;
-  name: string;
-  values: {
-    value: string;
-    label: string;
-    id?: string | null;
-  }[];
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "products".
- */
-export interface Product {
-  id: string;
-  language?: ('en' | 'sk') | null;
-  group: string | Group;
-  title: string;
-  disabled?: boolean | null;
-  description: string;
-  media: string | Media;
-  variants: {
-    price: {
-      amount: number;
-      currencyCode: 'eur';
-    };
-    selectedOptions?:
-      | {
-          option: string | Option;
-          value: string;
-          id?: string | null;
-        }[]
-      | null;
-    id?: string | null;
-  }[];
-  categories?: (string | Category)[] | null;
-  tags?: string[] | null;
-  stripeProductID?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "carts".
- */
-export interface Cart {
+export interface Form {
   id: string;
   group: string | Group;
-  totalAmount?: number | null;
-  totalTaxAmount?: number | null;
-  currencyCode?: string | null;
-  totalQuantity?: number | null;
-  user?: (string | null) | User;
-  lines?:
+  fields: (
     | {
-        product: string | Product;
-        variant?: string | null;
-        quantity: number;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "orders".
- */
-export interface Order {
-  id: string;
-  group: string | Group;
-  totalAmount?: number | null;
-  totalTaxAmount?: number | null;
-  currencyCode?: string | null;
-  totalQuantity?: number | null;
-  user?: (string | null) | User;
-  lines?:
-    | {
-        product: string | Product;
-        variant?: string | null;
-        quantity: number;
-        price?: number | null;
-        id?: string | null;
-      }[]
-    | null;
-  stripeSessionId?: string | null;
-  stripeUrl?: string | null;
-  reservation?: (string | null) | Reservation;
-  status: 'open' | 'complete' | 'expired';
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "reservations".
- */
-export interface Reservation {
-  id: string;
-  group: string | Group;
-  checkinDate: string;
-  checkoutDate: string;
-  status: 'reserved' | 'confirmed' | 'ongoing' | 'completed' | 'canceled';
-  guestsCount: number;
-  guests?:
-    | {
-        idCard: string;
         name: string;
-        email: string;
-        phone: string;
-        country:
-          | 'AD'
-          | 'AE'
-          | 'AF'
-          | 'AG'
-          | 'AI'
-          | 'AL'
-          | 'AM'
-          | 'AO'
-          | 'AQ'
-          | 'AR'
-          | 'AS'
-          | 'AT'
-          | 'AU'
-          | 'AW'
-          | 'AX'
-          | 'AZ'
-          | 'BA'
-          | 'BB'
-          | 'BD'
-          | 'BE'
-          | 'BF'
-          | 'BG'
-          | 'BH'
-          | 'BI'
-          | 'BJ'
-          | 'BL'
-          | 'BM'
-          | 'BN'
-          | 'BO'
-          | 'BQ'
-          | 'BR'
-          | 'BS'
-          | 'BT'
-          | 'BV'
-          | 'BW'
-          | 'BY'
-          | 'BZ'
-          | 'CA'
-          | 'CC'
-          | 'CD'
-          | 'CF'
-          | 'CG'
-          | 'CH'
-          | 'CI'
-          | 'CK'
-          | 'CL'
-          | 'CM'
-          | 'CN'
-          | 'CO'
-          | 'CR'
-          | 'CU'
-          | 'CV'
-          | 'CW'
-          | 'CX'
-          | 'CY'
-          | 'CZ'
-          | 'DE'
-          | 'DJ'
-          | 'DK'
-          | 'DM'
-          | 'DO'
-          | 'DZ'
-          | 'EC'
-          | 'EE'
-          | 'EG'
-          | 'EH'
-          | 'ER'
-          | 'ES'
-          | 'ET'
-          | 'FI'
-          | 'FJ'
-          | 'FK'
-          | 'FM'
-          | 'FO'
-          | 'FR'
-          | 'GA'
-          | 'GB'
-          | 'GD'
-          | 'GE'
-          | 'GF'
-          | 'GG'
-          | 'GH'
-          | 'GI'
-          | 'GL'
-          | 'GM'
-          | 'GN'
-          | 'GP'
-          | 'GQ'
-          | 'GR'
-          | 'GS'
-          | 'GT'
-          | 'GU'
-          | 'GW'
-          | 'GY'
-          | 'HK'
-          | 'HM'
-          | 'HN'
-          | 'HR'
-          | 'HT'
-          | 'HU'
-          | 'ID'
-          | 'IE'
-          | 'IL'
-          | 'IM'
-          | 'IN'
-          | 'IO'
-          | 'IQ'
-          | 'IR'
-          | 'IS'
-          | 'IT'
-          | 'JE'
-          | 'JM'
-          | 'JO'
-          | 'JP'
-          | 'KE'
-          | 'KG'
-          | 'KH'
-          | 'KI'
-          | 'KM'
-          | 'KN'
-          | 'KP'
-          | 'KR'
-          | 'KW'
-          | 'KY'
-          | 'KZ'
-          | 'LA'
-          | 'LB'
-          | 'LC'
-          | 'LI'
-          | 'LK'
-          | 'LR'
-          | 'LS'
-          | 'LT'
-          | 'LU'
-          | 'LV'
-          | 'LY'
-          | 'MA'
-          | 'MC'
-          | 'MD'
-          | 'ME'
-          | 'MF'
-          | 'MG'
-          | 'MH'
-          | 'MK'
-          | 'ML'
-          | 'MM'
-          | 'MN'
-          | 'MO'
-          | 'MP'
-          | 'MQ'
-          | 'MR'
-          | 'MS'
-          | 'MT'
-          | 'MU'
-          | 'MV'
-          | 'MW'
-          | 'MX'
-          | 'MY'
-          | 'MZ'
-          | 'NA'
-          | 'NC'
-          | 'NE'
-          | 'NF'
-          | 'NG'
-          | 'NI'
-          | 'NL'
-          | 'NO'
-          | 'NP'
-          | 'NR'
-          | 'NU'
-          | 'NZ'
-          | 'OM'
-          | 'PA'
-          | 'PE'
-          | 'PF'
-          | 'PG'
-          | 'PH'
-          | 'PK'
-          | 'PL'
-          | 'PM'
-          | 'PN'
-          | 'PR'
-          | 'PS'
-          | 'PT'
-          | 'PW'
-          | 'PY'
-          | 'QA'
-          | 'RE'
-          | 'RO'
-          | 'RS'
-          | 'RU'
-          | 'RW'
-          | 'SA'
-          | 'SB'
-          | 'SC'
-          | 'SD'
-          | 'SE'
-          | 'SG'
-          | 'SH'
-          | 'SI'
-          | 'SJ'
-          | 'SK'
-          | 'SL'
-          | 'SM'
-          | 'SN'
-          | 'SO'
-          | 'SR'
-          | 'SS'
-          | 'ST'
-          | 'SV'
-          | 'SX'
-          | 'SY'
-          | 'SZ'
-          | 'TC'
-          | 'TD'
-          | 'TF'
-          | 'TG'
-          | 'TH'
-          | 'TJ'
-          | 'TK'
-          | 'TL'
-          | 'TM'
-          | 'TN'
-          | 'TO'
-          | 'TR'
-          | 'TT'
-          | 'TV'
-          | 'TW'
-          | 'TZ'
-          | 'UA'
-          | 'UG'
-          | 'UM'
-          | 'US'
-          | 'UY'
-          | 'UZ'
-          | 'VA'
-          | 'VC'
-          | 'VE'
-          | 'VG'
-          | 'VI'
-          | 'VN'
-          | 'VU'
-          | 'WF'
-          | 'WS'
-          | 'XK'
-          | 'YE'
-          | 'YT'
-          | 'ZA'
-          | 'ZM'
-          | 'ZW';
+        label?: string | null;
+        defaultValue?: string | null;
+        required?: boolean | null;
+        minLength?: number | null;
+        maxLength?: number | null;
+        pattern?: string | null;
         id?: string | null;
-      }[]
-    | null;
-  lines?:
+        blockName?: string | null;
+        blockType: 'text-field';
+      }
     | {
-        product: string | Product;
-        variant?: string | null;
-        quantity: number;
+        name: string;
+        label?: string | null;
+        defaultValue?: number | null;
+        required?: boolean | null;
+        min?: number | null;
+        max?: number | null;
         id?: string | null;
-      }[]
-    | null;
+        blockName?: string | null;
+        blockType: 'number-field';
+      }
+    | {
+        name: string;
+        label?: string | null;
+        defaultValue?: boolean | null;
+        required?: boolean | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'checkbox-field';
+      }
+    | {
+        name: string;
+        label?: string | null;
+        defaultValue?: string | null;
+        required?: boolean | null;
+        options?:
+          | {
+              value: string;
+              label?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'select-field';
+      }
+  )[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "secrets".
+ */
+export interface Secret {
+  id: string;
+  key: 'stripe';
+  disabled?: boolean | null;
+  value: string;
+  group: string | Group;
   updatedAt: string;
   createdAt: string;
 }
