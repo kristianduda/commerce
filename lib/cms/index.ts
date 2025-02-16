@@ -239,8 +239,8 @@ const reshapeProduct = (product: PayloadProduct): Product => {
       maxVariantPrice: reshapePrice(sortedVariants.at(0)?.price!),
       minVariantPrice: reshapePrice(sortedVariants.at(-1)?.price!)
     },
-    featuredImage: reshapeImage(product.media as PayloadMedia),
-    images: [reshapeImage(product.media as PayloadMedia)],
+    featuredImage: reshapeImage(product.files[0]?.media as PayloadMedia),
+    images: product.files.map((file) => reshapeImage(file.media as PayloadMedia)),
     seo: {
       title: product.title,
       description: product.description

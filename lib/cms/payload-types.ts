@@ -17,15 +17,18 @@ export interface Config {
     carts: Cart;
     orders: Order;
     customers: Customer;
+    documents: Document;
+    sequences: Sequence;
     invoices: Invoice;
     guides: Guide;
     properties: Property;
     reservations: Reservation;
-    forms: Form;
     users: User;
     roles: Role;
     groups: Group;
-    secrets: Secret;
+    forms: Form;
+    integrations: Integration;
+    apiKeys: ApiKey;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
@@ -400,11 +403,18 @@ export interface Post {
 export interface User {
   id: string;
   name?: string | null;
-  roles?: ('admin' | 'user')[] | null;
+  roles?: 'admin'[] | null;
   groups?:
     | {
         group: string | Group;
         roles?: (string | Role)[] | null;
+        permissions?:
+          | {
+              subject: 'accommodation' | 'auth' | 'commerce' | 'content' | 'dev' | 'invoicing';
+              action: '1' | '15';
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -428,7 +438,7 @@ export interface Role {
   name: string;
   permissions?:
     | {
-        subject: 'auth' | 'content' | 'commerce' | 'accommodation' | 'builder' | 'invoicing';
+        subject: 'accommodation' | 'auth' | 'commerce' | 'content' | 'dev' | 'invoicing';
         action: '1' | '15';
         id?: string | null;
       }[]
@@ -462,6 +472,7 @@ export interface Tax {
   group: string | Group;
   title: string;
   rate: number;
+  taxIncluded?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -472,6 +483,9 @@ export interface Tax {
 export interface Product {
   id: string;
   group: string | Group;
+  stockQuantity?: number | null;
+  customer?: (string | null) | Customer;
+  property?: (string | null) | Property;
   title: string;
   disabled?: boolean | null;
   description: string;
@@ -490,12 +504,16 @@ export interface Product {
     };
     [k: string]: unknown;
   } | null;
-  media: string | Media;
+  files: {
+    media: string | Media;
+    id?: string | null;
+  }[];
   tax?: (string | null) | Tax;
+  unit: 'day' | 'hour' | 'piece';
   variants: {
     price: {
       amount: number;
-      currencyCode: 'eur' | 'czk';
+      currencyCode: 'czk' | 'eur';
     };
     selectedOptions?:
       | {
@@ -510,92 +528,6 @@ export interface Product {
   tags?: string[] | null;
   orderBy?: number | null;
   stripeProductID?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "carts".
- */
-export interface Cart {
-  id: string;
-  group: string | Group;
-  currencyCode: 'eur' | 'czk';
-  subtotalAmount?: number | null;
-  totalAmount?: number | null;
-  totalTaxAmount?: number | null;
-  totalQuantity?: number | null;
-  user?: (string | null) | User;
-  lines?:
-    | {
-        product: string | Product;
-        variant?: string | null;
-        quantity: number;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "orders".
- */
-export interface Order {
-  id: string;
-  group: string | Group;
-  currencyCode: 'eur' | 'czk';
-  subtotalAmount?: number | null;
-  totalAmount?: number | null;
-  totalTaxAmount?: number | null;
-  totalQuantity?: number | null;
-  user?: (string | null) | User;
-  lines?:
-    | {
-        product: string | Product;
-        variant?: string | null;
-        quantity: number;
-        price?: number | null;
-        netPrice?: number | null;
-        grossPrice?: number | null;
-        id?: string | null;
-      }[]
-    | null;
-  stripeSessionId?: string | null;
-  stripeUrl?: string | null;
-  reservation?: (string | null) | Reservation;
-  status: 'open' | 'complete' | 'expired';
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "reservations".
- */
-export interface Reservation {
-  id: string;
-  checkinDate: string;
-  checkoutDate: string;
-  lines?:
-    | {
-        product: string | Product;
-        variant?: string | null;
-        quantity: number;
-        id?: string | null;
-      }[]
-    | null;
-  guests?:
-    | {
-        idCard: string;
-        name: string;
-        email: string;
-        phone: string;
-        id?: string | null;
-      }[]
-    | null;
-  group: string | Group;
-  status: 'reserved' | 'confirmed' | 'ongoing' | 'completed' | 'canceled';
-  guestsCount: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -877,52 +809,12 @@ export interface Customer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "invoices".
- */
-export interface Invoice {
-  id: string;
-  group: string | Group;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "guides".
- */
-export interface Guide {
-  id: string;
-  name: string;
-  disabled?: boolean | null;
-  description: string;
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  group: string | Group;
-  property?: (string | null) | Property;
-  orderBy?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "properties".
  */
 export interface Property {
   id: string;
   group: string | Group;
-  checkInType: 'nobody' | 'atLeastOne' | 'everybody';
+  checkInType: 'atLeastOne' | 'everybody' | 'nobody';
   name: string;
   disabled?: boolean | null;
   email?: string | null;
@@ -1194,6 +1086,189 @@ export interface Property {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts".
+ */
+export interface Cart {
+  id: string;
+  group: string | Group;
+  currencyCode: 'czk' | 'eur';
+  subtotalAmount?: number | null;
+  totalAmount?: number | null;
+  totalTaxAmount?: number | null;
+  totalQuantity?: number | null;
+  user?: (string | null) | User;
+  lines?:
+    | {
+        product: string | Product;
+        variant?: string | null;
+        price?: number | null;
+        quantity: number;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: string;
+  group: string | Group;
+  currencyCode: 'czk' | 'eur';
+  subtotalAmount?: number | null;
+  totalAmount?: number | null;
+  totalTaxAmount?: number | null;
+  totalQuantity?: number | null;
+  user?: (string | null) | User;
+  lines?:
+    | {
+        product: string | Product;
+        variant?: string | null;
+        price?: number | null;
+        quantity: number;
+        netPrice?: number | null;
+        grossPrice?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  stripeSessionId?: string | null;
+  stripeUrl?: string | null;
+  reservation?: (string | null) | Reservation;
+  status: 'open' | 'complete' | 'expired';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reservations".
+ */
+export interface Reservation {
+  id: string;
+  property?: (string | null) | Property;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+  lines?:
+    | {
+        product: string | Product;
+        variant?: string | null;
+        price?: number | null;
+        quantity: number;
+        id?: string | null;
+      }[]
+    | null;
+  guests?:
+    | {
+        idCard: string;
+        name: string;
+        email: string;
+        phone: string;
+        id?: string | null;
+      }[]
+    | null;
+  group: string | Group;
+  status: 'canceled' | 'completed' | 'confirmed' | 'ongoing' | 'reserved';
+  guestsCount: number;
+  pin?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "documents".
+ */
+export interface Document {
+  id: string;
+  group: string | Group;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sequences".
+ */
+export interface Sequence {
+  id: string;
+  col: string;
+  prefix?: string | null;
+  value: number;
+  group: string | Group;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "invoices".
+ */
+export interface Invoice {
+  id: string;
+  customer: string | Customer;
+  lines?:
+    | {
+        product: string | Product;
+        variant?: string | null;
+        price?: number | null;
+        quantity: number;
+        netPrice?: number | null;
+        grossPrice?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  group: string | Group;
+  currencyCode: 'czk' | 'eur';
+  sequenceNumber?: string | null;
+  deliveryDate: string;
+  issueDate: string;
+  dueDate: string;
+  subtotalAmount?: number | null;
+  totalAmount?: number | null;
+  totalTaxAmount?: number | null;
+  user?: (string | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guides".
+ */
+export interface Guide {
+  id: string;
+  name: string;
+  disabled?: boolean | null;
+  description: string;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  group: string | Group;
+  property?: (string | null) | Property;
+  orderBy?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "forms".
  */
 export interface Form {
@@ -1254,13 +1329,33 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "secrets".
+ * via the `definition` "integrations".
  */
-export interface Secret {
+export interface Integration {
   id: string;
-  key: 'stripe';
+  type: 'stripe';
   disabled?: boolean | null;
-  value: string;
+  apiKey?: string | null;
+  group: string | Group;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "apiKeys".
+ */
+export interface ApiKey {
+  id: string;
+  name: string;
+  disabled?: boolean | null;
+  value?: string | null;
+  permissions?:
+    | {
+        subject: 'accommodation' | 'auth' | 'commerce' | 'content' | 'dev' | 'invoicing';
+        action: '1' | '15';
+        id?: string | null;
+      }[]
+    | null;
   group: string | Group;
   updatedAt: string;
   createdAt: string;
