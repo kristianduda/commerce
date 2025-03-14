@@ -13,7 +13,7 @@ export async function GET(): Promise<NextResponse> {
     const url = `${process.env.CMS_URL}/api/carts/${cartId}/checkout`;
     const order = await ajax<any>(url, 'POST', {});
 
-    return NextResponse.redirect(order.stripeUrl, 303);
+    return NextResponse.redirect(order.redirectUrl, 303);
   } catch (err: any) {
     return NextResponse.json({ message: err.message }, { status: err.statusCode });
   }
