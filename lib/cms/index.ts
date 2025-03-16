@@ -72,7 +72,11 @@ const reshapeCart = (cart: PayloadCart): Cart => {
 };
 
 export async function createCart(): Promise<Cart> {
-  const cart = await payload.create('carts', { group: GROUP, lines: [] });
+  const cart = await payload.create('carts', {
+    group: GROUP,
+    lines: [],
+    currencyCode: CURRENCY_CODE
+  });
   return reshapeCart(cart.doc);
 }
 
