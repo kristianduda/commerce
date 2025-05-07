@@ -39,7 +39,7 @@ function ThreeItemGridItem({
 
 export async function ThreeItemGrid() {
   const homepageItems = await getCollectionProducts({
-    featured: true
+    tag: 'featured'
   });
 
   if (!homepageItems[0] || !homepageItems[1] || !homepageItems[2]) return null;

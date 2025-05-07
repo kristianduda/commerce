@@ -257,12 +257,12 @@ const reshapeProduct = (product: PayloadProduct): Product => {
 
 export async function getCollectionProducts({
   collection,
-  featured,
+  tag,
   sortKey,
   reverse
 }: {
   collection?: string;
-  featured?: boolean;
+  tag?: string;
   reverse?: boolean;
   sortKey?: string;
 }): Promise<Product[]> {
@@ -285,10 +285,10 @@ export async function getCollectionProducts({
       }
     });
   }
-  if (featured) {
+  if (tag) {
     filters.push({
-      orderBy: {
-        greater_than_equal: 1
+      tags: {
+        equals: tag
       }
     });
   }
